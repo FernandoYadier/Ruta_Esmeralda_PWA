@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 
 // Corazón para guardar o quitar un lugar de favoritos.
 // Sin sesión, manda a iniciar sesión y regresa a la misma página.
-export default function BotonFavorito({ lugarId, inicial = false, haySesion = false, className = "" }) {
+export default function BotonFavorito({ lugarId, inicial = false, haySesion = false, className = "", onCambio }) {
   const router = useRouter();
   const pathname = usePathname();
   const [activo, setActivo] = useState(inicial);
@@ -28,7 +28,8 @@ export default function BotonFavorito({ lugarId, inicial = false, haySesion = fa
       ? await supabase.from("favoritos").insert({ lugar_id: lugarId })
       : await supabase.from("favoritos").delete().eq("lugar_id", lugarId);
 
-    if (error) setActivo(!nuevo);
+        if (error) setActivo(!nuevo);
+    else onCambio?.(nuevo);
     setPendiente(false);
   }
 

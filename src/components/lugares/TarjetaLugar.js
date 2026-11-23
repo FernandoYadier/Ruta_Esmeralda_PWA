@@ -6,7 +6,7 @@ import { estiloCategoria } from "@/lib/categorias-estilo";
 
 // Tarjeta de un lugar (portada, categoría, calificación y corazón de favoritos).
 // numero / dia: se muestran solo cuando la tarjeta es una parada de un recorrido.
-export default function TarjetaLugar({ lugar, categoria, favorito = false, haySesion = false, numero, dia }) {
+export default function TarjetaLugar({ lugar, categoria, favorito = false, haySesion = false, numero, dia, onCambioFavorito }) {
   const estilo = estiloCategoria(categoria?.slug);
   const Icono = estilo.icono;
 
@@ -36,6 +36,7 @@ export default function TarjetaLugar({ lugar, categoria, favorito = false, haySe
           </span>
         )}
         <BotonFavorito
+          onCambio={onCambioFavorito}
           lugarId={lugar.id}
           inicial={favorito}
           haySesion={haySesion}
