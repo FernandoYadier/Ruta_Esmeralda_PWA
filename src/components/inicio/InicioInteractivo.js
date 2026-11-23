@@ -7,7 +7,7 @@ import Button from "@/components/ui/Button";
 import Mapa from "@/components/mapa/Mapa";
 import TarjetaLugar from "@/components/lugares/TarjetaLugar";
 import { estiloCategoria } from "@/lib/categorias-estilo";
-import { DURACIONES, generarRecorrido } from "@/lib/recorridos";
+import { DURACIONES, generarRecorridoParaPersona, urlPlaneador } from "@/lib/recorridos";
 
 const CANTIDAD_DESTACADOS = 4;
 
@@ -36,18 +36,11 @@ export default function InicioInteractivo({ lugares, categorias, favoritosIds = 
 
   function generar(evento) {
     evento.preventDefault();
-    const idServicios = categorias.find((c) => c.slug === "servicios")?.id;
-    // Servicios y hospedaje no son paradas turísticas: solo entran si la persona los elige.
-    const noTuristicas = categorias.filter((c) => ["servicios", "hospedaje"].includes(c.slug)).map((c) => c.id);
-    setRecorrido(
-      generarRecorrido(lugares, {
-        duracion,
-        categoriaIds: intereses,
-        excluirPorDefecto: noTuristicas,
-        // Quien se muda necesita primero los servicios básicos de la ciudad.
-        prioritarias: duracion === "mudandome" && idServicios ? [idServicios] : [],
-      }),
-    );
+    // Se recuerdan los datos con los que se generó, para el enlace «Personalizar y guardar».
+    setRecorrido({
+      ...generarRecorridoParaPersona(lugares, categorias, { duracion, categoriaIds: intereses }),
+      parametros: { duracion, categoriaIds: intereses },
+    });
   }
 
   const paradas = recorrido?.paradas ?? [];
@@ -129,6 +122,11 @@ export default function InicioInteractivo({ lugares, categorias, favoritosIds = 
                   {recorrido.dias > 1 && ` en ${recorrido.dias} días`}
                   {paradas.length > 1 && ` · unos ${recorrido.distanciaKm} km en línea recta`}
                 </p>
+                <div className="mt-3">
+                  <Button href={urlPlaneador(recorrido.parametros)} variante="secundario">
+                    Personalizar y guardar este recorrido
+                  </Button>
+                </div>
               </>
             ) : (
               <p className="rounded-2xl bg-white p-4 text-sm text-gray-700 ring-1 ring-esmeralda-100">

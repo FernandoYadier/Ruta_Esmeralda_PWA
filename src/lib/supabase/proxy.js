@@ -3,6 +3,9 @@ import { NextResponse } from "next/server";
 
 // Rutas que exigen haber iniciado sesión.
 const RUTAS_PRIVADAS = ["/perfil", "/favoritos"];
+// Prefijos privados: todo lo que cuelgue de ellos exige sesión, pero la ruta base sigue siendo pública.
+// (/recorridos es el planeador, abierto a todos; /recorridos/<id> es un recorrido guardado, solo de su dueño.)
+const PREFIJOS_PRIVADOS = ["/recorridos/"];
 // Rutas de paneles: además de sesión, exigen un rol.
 const ROLES_POR_PANEL = {
   "/admin": ["admin"],
@@ -50,7 +53,10 @@ export async function updateSession(request) {
   };
 
   const panel = Object.keys(ROLES_POR_PANEL).find((base) => empiezaCon(pathname, base));
-  const esPrivada = panel || RUTAS_PRIVADAS.some((base) => empiezaCon(pathname, base));
+  const esPrivada =
+    panel ||
+    RUTAS_PRIVADAS.some((base) => empiezaCon(pathname, base)) ||
+    PREFIJOS_PRIVADOS.some((prefijo) => pathname.startsWith(prefijo));
 
   if (!claims && esPrivada) {
     return redirigir({ pathname: "/login", search: `?next=${encodeURIComponent(pathname)}` });
