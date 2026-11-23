@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import Logo from "@/components/layout/Logo";
 import NavLink from "@/components/layout/NavLink";
@@ -55,12 +56,22 @@ export default async function Header() {
               href="/perfil"
               className="flex items-center gap-2 rounded-full py-1 pl-1 pr-3 text-sm font-semibold text-esmeralda-900 hover:bg-esmeralda-50"
             >
-              <span
-                aria-hidden="true"
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-esmeralda-700 text-sm font-semibold text-white"
-              >
-                {inicial}
-              </span>
+              {sesion.avatarUrl ? (
+                <Image
+                  src={sesion.avatarUrl}
+                  alt={`Foto de perfil de ${sesion.nombre || "tu cuenta"}`}
+                  width={32}
+                  height={32}
+                  className="h-8 w-8 rounded-full object-cover"
+                />
+              ) : (
+                <span
+                  aria-hidden="true"
+                  className="flex h-8 w-8 items-center justify-center rounded-full bg-esmeralda-700 text-sm font-semibold text-white"
+                >
+                  {inicial}
+                </span>
+              )}
               <span className="hidden max-w-32 truncate sm:inline">{sesion.nombre || "Mi perfil"}</span>
             </Link>
             <form action={cerrarSesion} className="hidden sm:block">
